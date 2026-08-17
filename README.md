@@ -1,42 +1,141 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web.
+# かくしーと
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+PDFにマーカーを引いて、タップするとマーカー部分を隠せる**学習支援アプリ**です。
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+PDF教材にマーカーを引き、マーカー部分を隠して暗記・復習できる「自分で作る穴埋め問題」のような使い方を想定しています。
 
-### Running the apps
+## Features
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+* PDFファイルの閲覧
+* PDF上へのマーカー描画
+* マーカー部分のマスク表示
+* タップによるマーカーの表示・非表示
+* PDFそのものを変更せず、オーバーレイとしてマーカーを管理
+* マーカー情報のローカル保存
+* 複数端末での利用・クラウド同期（Premium向け、予定）
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Web app:
-  - Wasm target (faster, modern browsers): `./gradlew :webApp:wasmJsBrowserDevelopmentRun`
-  - JS target (slower, supports older browsers): `./gradlew :webApp:jsBrowserDevelopmentRun`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## Project
 
-### Running tests
+「かくしーと」は Kotlin Multiplatform（KMP）を利用し、複数プラットフォームで共通のロジックを共有する構成を目指しています。
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+```text
+kakushito/
+├── README.md
+├── docs/
+│   └── coordinate-system.md
+├── shared/
+├── androidApp/
+└── iosApp/
+```
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Web tests:
-  - Wasm target: `./gradlew :shared:wasmJsTest`
-  - JS target: `./gradlew :shared:jsTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+## Architecture
 
----
+PDFの表示とマーカー情報を分離して管理します。
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+```text
+PDF
+ │
+ │ 表示
+ ↓
+PDF Viewer
+ │
+ ├──────────────┐
+ │              │
+ ↓              ↓
+PDF表示       Marker Overlay
+               │
+               ↓
+          Marker Data
+```
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+マーカーはPDFファイルそのものに書き込まず、PDFの上に重ねる透明なレイヤーとして管理します。
+
+これにより、印刷禁止・読み取り専用など、PDF自体を編集できない場合でも、アプリ側でマーカーを付けられる設計とします。
+
+### Coordinate System
+
+マーカーの座標は**PDF座標を唯一の正規座標系**として扱います。
+
+画面サイズ、ズーム倍率、スクロール位置などの表示状態は保存データに含めず、表示時にPDF座標から画面座標へ変換します。
+
+詳細は以下を参照してください。
+
+* [PDF座標系・画面座標系変換仕様](docs/coordinate-system.md)
+
+基本的なデータフローは以下のとおりです。
+
+```text
+ユーザー操作
+    ↓
+画面座標
+    ↓
+Screen → PDF変換
+    ↓
+PDF座標
+    ↓
+保存
+```
+
+表示時は逆方向に変換します。
+
+```text
+保存されたマーカー
+    ↓
+PDF座標
+    ↓
+PDF → Screen変換
+    ↓
+画面上に描画
+```
+
+この方式により、ズームや画面回転、端末サイズの違いがあっても、マーカーをPDF上の同じ位置に表示できます。
+
+## Data
+
+マーカーなどのアプリ固有データは、PDFファイルとは独立して管理します。
+
+概念的には以下のような構造を想定しています。
+
+```text
+Document
+├── PDF
+└── Annotations
+    ├── Marker
+    ├── Mask
+    └── ...
+```
+
+PDFファイルを変更するのではなく、PDFを参照する形でアノテーション情報を管理します。
+
+## Development
+
+### Requirements
+
+開発環境の詳細は、各プラットフォームおよびKotlin Multiplatformの構成に応じて整備していきます。
+
+主な開発環境：
+
+* Kotlin
+* Kotlin Multiplatform
+* Android
+* iOS
+
+## Documentation
+
+詳細な設計・仕様は `docs/` 以下にまとめます。
+
+* [PDF座標系・画面座標系変換仕様](docs/coordinate-system.md)
+
+今後、以下のような仕様を追加予定です。
+
+* PDF表示仕様
+* マーカー仕様
+* マスク仕様
+* データモデル仕様
+* ファイル保存仕様
+* 同期仕様
+* 課金・Premium機能仕様
+
+## License
+
+TBD
