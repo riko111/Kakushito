@@ -49,6 +49,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.math.min
+import androidx.core.graphics.createBitmap
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,7 +148,8 @@ private suspend fun renderPage(context: Context, uri: Uri, pageIndex: Int): Rend
     context.contentResolver.openFileDescriptor(uri, "r")!!.use { descriptor -> PdfRenderer(descriptor).use { renderer ->
         val safeIndex = pageIndex.coerceIn(0, renderer.pageCount - 1)
         renderer.openPage(safeIndex).use { page ->
-            val bitmap = Bitmap.createBitmap(page.width * 2, page.height * 2, Bitmap.Config.ARGB_8888)
+            val bitmap = createBitmap(page.width * 2, page.height * 2)
+            bitmap.eraseColor(android.graphics.Color.WHITE)
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
             RenderedPage(bitmap, page.width, page.height, renderer.pageCount)
         }
