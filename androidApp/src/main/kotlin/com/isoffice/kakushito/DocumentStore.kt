@@ -6,8 +6,56 @@ import org.json.JSONArray
 import org.json.JSONObject
 import androidx.core.content.edit
 
-class MarkerStore(context: Context) {
+
+
+class DocumentStore(context: Context) {
     private val preferences = context.getSharedPreferences("kakushito_markers", Context.MODE_PRIVATE)
+    private companion object {
+        const val RECENT_FILES_KEY = "recent_files"
+        const val MAX_RECENT_FILES = 10
+    }
+
+    fun addRecentFile(uri: Uri, fileName: String) {
+        val current = loadRecentFiles()
+            .filterNot { it.uri == uri }
+            .toMutableList()
+
+        current.add(
+            0,
+            RecentFile(uri, fileName)
+        )
+
+        val limited = current.take(MAX_RECENT_FILES)
+
+        val array = JSONArray()
+
+        limited.forEach { file ->
+            array.put(
+                JSONObject()
+                    .put("uri", file.uri.toString())
+                    .put("fileName", file.fileName)
+            )
+        }
+
+        preferences.edit {
+            putString(RECENT_FILES_KEY, array.toString())
+        }
+    }
+
+    fun loadRecentFiles(): List<RecentFile> = runCatching {
+        val array = JSONArray(
+            preferences.getString(RECENT_FILES_KEY, "[]")
+        )
+
+        List(array.length()) { index ->
+            array.getJSONObject(index).let { item ->
+                RecentFile(
+                    uri = Uri.parse(item.getString("uri")),
+                    fileName = item.getString("fileName")
+                )
+            }
+        }
+    }.getOrDefault(emptyList())
 
     fun documentUri(): Uri? = preferences.getString("document_uri", null)?.let(Uri::parse)
 
