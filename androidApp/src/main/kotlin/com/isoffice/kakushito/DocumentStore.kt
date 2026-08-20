@@ -6,8 +6,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import androidx.core.content.edit
 
-
-
 class DocumentStore(context: Context) {
     private val preferences = context.getSharedPreferences("kakushito_markers", Context.MODE_PRIVATE)
     private companion object {
@@ -20,16 +18,10 @@ class DocumentStore(context: Context) {
             .filterNot { it.uri == uri }
             .toMutableList()
 
-        current.add(
-            0,
-            RecentFile(uri, fileName)
-        )
-
-        val limited = current.take(MAX_RECENT_FILES)
+        current.add(0, RecentFile(uri, fileName))
 
         val array = JSONArray()
-
-        limited.forEach { file ->
+        current.take(MAX_RECENT_FILES).forEach { file ->
             array.put(
                 JSONObject()
                     .put("uri", file.uri.toString())
@@ -37,16 +29,11 @@ class DocumentStore(context: Context) {
             )
         }
 
-        preferences.edit {
-            putString(RECENT_FILES_KEY, array.toString())
-        }
+        preferences.edit { putString(RECENT_FILES_KEY, array.toString()) }
     }
 
     fun loadRecentFiles(): List<RecentFile> = runCatching {
-        val array = JSONArray(
-            preferences.getString(RECENT_FILES_KEY, "[]")
-        )
-
+        val array = JSONArray(preferences.getString(RECENT_FILES_KEY, "[]"))
         List(array.length()) { index ->
             array.getJSONObject(index).let { item ->
                 RecentFile(
@@ -67,12 +54,17 @@ class DocumentStore(context: Context) {
             array.getJSONObject(index).let { item ->
                 val points = item.getJSONArray("points")
                 Marker(
-                    item.getInt("page"),
-                    List(points.length()) { pointIndex ->
+                    page = item.getInt("page"),
+                    points = List(points.length()) { pointIndex ->
                         points.getJSONObject(pointIndex).let {
-                            PdfPoint(it.getDouble("x").toFloat(), it.getDouble("y").toFloat())
+                            PdfPoint(
+                                it.getDouble("x").toFloat(),
+                                it.getDouble("y").toFloat()
+                            )
                         }
-                    }
+                    },
+                    color = item.optInt("color", 0xFFFFE600.toInt()),
+                    width = item.optDouble("width", 14.0).toFloat()
                 )
             }
         }
@@ -81,11 +73,21 @@ class DocumentStore(context: Context) {
     fun saveMarkers(uri: Uri, markers: List<Marker>) {
         val array = JSONArray()
         markers.forEach { marker ->
-            array.put(JSONObject().put("page", marker.page).put("points", JSONArray().also { points ->
-                marker.points.forEach { point ->
-                    points.put(JSONObject().put("x", point.x).put("y", point.y))
-                }
-            }))
+            array.put(
+                JSONObject()
+                    .put("page", marker.page)
+                    .put("color", marker.color)
+                    .put("width", marker.width)
+                    .put("points", JSONArray().also { points ->
+                        marker.points.forEach { point ->
+                            points.put(
+                                JSONObject()
+                                    .put("x", point.x)
+                                    .put("y", point.y)
+                            )
+                        }
+                    })
+            )
         }
         preferences.edit { putString("markers_${uri}", array.toString()) }
     }
