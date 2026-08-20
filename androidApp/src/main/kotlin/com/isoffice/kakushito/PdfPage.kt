@@ -329,9 +329,15 @@ fun PdfPage(
 
                             if (moved) {
 
-                                if (userScale > 1f) {
+                                // ==================================================
+                                // 拡大中でもマーカー・消しゴムを使用可能にする
+                                // ==================================================
+                                if (
+                                    userScale > 1f &&
+                                    drawMode == DrawMode.None
+                                ) {
                                     // --------------------------------
-                                    // ズーム中
+                                    // ズーム中 + 通常モード
                                     // 1本指ドラッグ → パン
                                     // --------------------------------
                                     val pan =
@@ -384,8 +390,11 @@ fun PdfPage(
 
                                 } else {
                                     // --------------------------------
-                                    // 通常時
-                                    // 1本指ドラッグ → ストローク
+                                    // 以下の場合は描画・消去
+                                    //
+                                    // ・通常倍率
+                                    // ・ズーム中 + Marker
+                                    // ・ズーム中 + Eraser
                                     // --------------------------------
                                     if (activeStroke.isEmpty()) {
                                         activeStroke =
@@ -551,9 +560,6 @@ fun PdfPage(
                                 // --------------------------------
                                 DrawMode.Hide -> {
                                     // 何もしない
-                                    //
-                                    // 隠す処理はCanvasの描画側で
-                                    // 保存済みMarkerを白く描画する。
                                 }
 
                                 // --------------------------------
@@ -642,20 +648,17 @@ fun PdfPage(
                     drawLine(
                         color =
                             if (drawMode == DrawMode.Hide) {
-                                // 隠すモード
                                 Color.White
                             } else {
-                                // 通常のマーカー
                                 Color(0x88FFE600)
                             },
                         start = pdfToScreen(from),
                         end = pdfToScreen(to),
                         strokeWidth =
                             if (drawMode == DrawMode.Hide) {
-                                // 隠すときは少し太くする
-                                24f * displayScale
+                                22f * displayScale
                             } else {
-                                18f * displayScale
+                                14f * displayScale
                             }
                     )
                 }
@@ -674,7 +677,7 @@ fun PdfPage(
                         color = Color(0xAAFFE600),
                         start = from,
                         end = to,
-                        strokeWidth = 18f * displayScale
+                        strokeWidth = 14f * displayScale
                     )
                 }
         }
