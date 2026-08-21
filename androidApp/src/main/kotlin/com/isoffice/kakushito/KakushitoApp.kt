@@ -43,7 +43,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.compose.runtime.withFrameNanos
 import kotlin.math.roundToInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 // ==================================================
@@ -758,6 +761,11 @@ fun KakushitoApp(context: Context) {
                 pageCount - 1
             )
 
+        // ページ切替中に旧ページへ入力されないよう、
+        // 新ページの描画が完了するまで現在の表示を破棄する。
+        rendered = null
+        renderedPageIndex = -1
+
         pageIndex =
             newPage
 
@@ -808,17 +816,18 @@ fun KakushitoApp(context: Context) {
                 uri =
                     selected
 
-                pageCount =
-                    getPageCount(
-                        context,
-                        selected
-                    )
+                // ページ数は LaunchedEffect(uri) 側で
+                // IOディスパッチャを使って取得する。
+                pageCount = 0
 
                 markers =
                     emptyList()
 
                 rendered =
                     null
+
+                renderedPageIndex =
+                    -1
 
                 message =
                     null
@@ -844,10 +853,12 @@ fun KakushitoApp(context: Context) {
         pageCount =
             runCatching {
 
-                getPageCount(
-                    context,
-                    document
-                )
+                withContext(Dispatchers.IO) {
+                    getPageCount(
+                        context,
+                        document
+                    )
+                }
 
             }.getOrElse {
 
@@ -1658,6 +1669,9 @@ fun KakushitoApp(context: Context) {
 
                     rendered =
                         null
+
+                    renderedPageIndex =
+                        -1
 
                     store.setDocumentUri(
                         selectedUri
