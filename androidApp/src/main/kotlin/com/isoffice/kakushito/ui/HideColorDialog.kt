@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.isoffice.kakushito.R
 
 // ==================================================
 // 隠す色選択ダイアログ
@@ -36,7 +38,7 @@ fun HideColorDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text("隠す色")
+            Text(stringResource(R.string.hide_color))
         },
 
         text = {
@@ -44,7 +46,7 @@ fun HideColorDialog(
             Column {
 
                 Text(
-                    text = "隠す対象のマーカー色を選択してください。",
+                    text = stringResource(R.string.hide_color_description),
                     modifier = Modifier.padding(
                         bottom = 12.dp
                     )
@@ -94,7 +96,7 @@ fun HideColorDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("閉じる")
+                Text(stringResource(R.string.close))
             }
         }
     )

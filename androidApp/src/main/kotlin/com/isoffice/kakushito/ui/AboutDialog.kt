@@ -8,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.isoffice.kakushito.R
 
 // ==================================================
 // このアプリについて
@@ -24,21 +26,21 @@ fun AboutDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text("このアプリについて")
+            Text(stringResource(R.string.about_app))
         },
 
         text = {
 
             Column {
 
-                Text("かくしーと")
+                Text(stringResource(R.string.app_name))
 
                 Spacer(
                     Modifier.height(8.dp)
                 )
 
                 Text(
-                    "PDFにマーカーを引いて、重要な部分を隠しながら暗記できる学習アプリです。"
+                    stringResource(R.string.app_description)
                 )
             }
         },
@@ -48,7 +50,7 @@ fun AboutDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("閉じる")
+                Text(stringResource(R.string.close))
             }
         }
     )

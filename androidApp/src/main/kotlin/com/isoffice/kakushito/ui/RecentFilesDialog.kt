@@ -9,7 +9,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.isoffice.kakushito.R
 import com.isoffice.kakushito.document.DocumentStore
 // ==================================================
 // 最近使ったファイル
@@ -32,7 +34,7 @@ fun RecentFilesDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text("最近使ったファイル")
+            Text(stringResource(R.string.recent_files))
         },
 
         text = {
@@ -40,7 +42,7 @@ fun RecentFilesDialog(
             if (recentFiles.isEmpty()) {
 
                 Text(
-                    "最近使ったファイルはありません"
+                    stringResource(R.string.no_recent_files)
                 )
 
             } else {
@@ -78,7 +80,7 @@ fun RecentFilesDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("閉じる")
+                Text(stringResource(R.string.close))
             }
         }
     )

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.core.graphics.createBitmap
+import com.isoffice.kakushito.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -64,5 +65,5 @@ suspend fun renderPage(
         PdfRenderer(descriptor).use { renderer ->
             renderer.pageCount
         }
-    } ?: throw IllegalStateException("PDFを開けませんでした")
+    } ?: throw IllegalStateException(context.getString(R.string.pdf_open_failed_generic))
 }
