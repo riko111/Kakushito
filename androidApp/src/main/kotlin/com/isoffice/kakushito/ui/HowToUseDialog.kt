@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.isoffice.kakushito.R
 
 
 // ==================================================
@@ -26,17 +28,17 @@ fun HowToUseDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text("使い方")
+            Text(stringResource(R.string.how_to_use))
         },
 
         text = {
 
             Column {
 
-                Text("① PDFを開く")
+                Text(stringResource(R.string.how_to_open_pdf_title))
 
                 Text(
-                    "「PDFを開く」からPDFを選択します。",
+                    stringResource(R.string.how_to_open_pdf_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -47,10 +49,10 @@ fun HowToUseDialog(
                     Modifier.height(12.dp)
                 )
 
-                Text("② マーカーを引く")
+                Text(stringResource(R.string.how_to_draw_marker_title))
 
                 Text(
-                    "マーカーをタップしてONにし、PDFを指でなぞります。",
+                    stringResource(R.string.how_to_draw_marker_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -61,10 +63,10 @@ fun HowToUseDialog(
                     Modifier.height(12.dp)
                 )
 
-                Text("③ マーカー部分を隠す")
+                Text(stringResource(R.string.how_to_hide_marker_title))
 
                 Text(
-                    "「隠す」をタップすると、マーカー部分を隠して暗記できます。",
+                    stringResource(R.string.how_to_hide_marker_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -75,10 +77,10 @@ fun HowToUseDialog(
                     Modifier.height(12.dp)
                 )
 
-                Text("④ マーカーを消す")
+                Text(stringResource(R.string.how_to_erase_marker_title))
 
                 Text(
-                    "消しゴムをタップして、不要なマーカーを消します。",
+                    stringResource(R.string.how_to_erase_marker_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -89,10 +91,10 @@ fun HowToUseDialog(
                     Modifier.height(12.dp)
                 )
 
-                Text("⑤ マーカーを長押し")
+                Text(stringResource(R.string.how_to_marker_settings_title))
 
                 Text(
-                    "マーカーを長押しすると、太さと色を変更できます。",
+                    stringResource(R.string.how_to_marker_settings_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -103,10 +105,10 @@ fun HowToUseDialog(
                     Modifier.height(12.dp)
                 )
 
-                Text("⑥ 隠すを長押し")
+                Text(stringResource(R.string.how_to_hide_color_title))
 
                 Text(
-                    "隠すを長押しすると、隠す対象の色を選択できます。",
+                    stringResource(R.string.how_to_hide_color_description),
                     modifier = Modifier.padding(
                         start = 16.dp,
                         top = 4.dp
@@ -120,7 +122,7 @@ fun HowToUseDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("閉じる")
+                Text(stringResource(R.string.close))
             }
         }
     )

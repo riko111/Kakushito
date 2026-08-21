@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">かくしーと</string>
+    <string name="close">閉じる</string>
+    <string name="recent_files">最近使ったファイル</string>
+    <string name="no_recent_files">最近使ったファイルはありません</string>
+    <string name="about_app">このアプリについて</string>
+    <string name="app_description">PDFにマーカーを引いて、重要な部分を隠しながら暗記できる学習アプリです。</string>
+    <string name="marker_settings">マーカー設定</string>
+    <string name="marker_width">太さ</string>
+    <string name="marker_color">色</string>
+    <string name="how_to_use">使い方</string>
+    <string name="how_to_open_pdf_title">① PDFを開く</string>
+    <string name="how_to_open_pdf_description">「PDFを開く」からPDFを選択します。</string>
+    <string name="how_to_draw_marker_title">② マーカーを引く</string>
+    <string name="how_to_draw_marker_description">マーカーをタップしてONにし、PDFを指でなぞります。</string>
+    <string name="how_to_hide_marker_title">③ マーカー部分を隠す</string>
+    <string name="how_to_hide_marker_description">「隠す」をタップすると、マーカー部分を隠して暗記できます。</string>
+    <string name="how_to_erase_marker_title">④ マーカーを消す</string>
+    <string name="how_to_erase_marker_description">消しゴムをタップして、不要なマーカーを消します。</string>
+    <string name="how_to_marker_settings_title">⑤ マーカーを長押し</string>
+    <string name="how_to_marker_settings_description">マーカーを長押しすると、太さと色を変更できます。</string>
+    <string name="how_to_hide_color_title">⑥ 隠すを長押し</string>
+    <string name="how_to_hide_color_description">隠すを長押しすると、隠す対象の色を選択できます。</string>
+    <string name="hide_color">隠す色</string>
+    <string name="hide_color_description">隠す対象のマーカー色を選択してください。</string>
+    <string name="open_pdf">PDFを開く</string>
+    <string name="marker">マーカー</string>
+    <string name="eraser">消しゴム</string>
+    <string name="hide_mode">隠すモード</string>
+    <string name="menu">メニュー</string>
+    <string name="select_pdf">PDFを選択してください</string>
+    <string name="pdf_default_file_name">PDF</string>
+    <string name="pdf_open_failed">PDFを開けませんでした: %1$s</string>
+    <string name="pdf_open_failed_generic">PDFを開けませんでした</string>
 </resources>

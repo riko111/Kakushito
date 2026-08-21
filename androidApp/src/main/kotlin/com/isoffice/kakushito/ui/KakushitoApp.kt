@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -110,7 +111,7 @@ private fun getFileName(
         }
     }
 
-    return "PDF"
+    return context.getString(R.string.pdf_default_file_name)
 }
 
 
@@ -383,7 +384,7 @@ fun KakushitoApp(context: Context) {
             }.getOrElse {
 
                 message =
-                    "PDFを開けませんでした: ${it.message}"
+                    context.getString(R.string.pdf_open_failed, it.message)
 
                 0
             }
@@ -433,7 +434,7 @@ fun KakushitoApp(context: Context) {
             .onFailure {
 
                 message =
-                    "PDFを開けませんでした: ${it.message}"
+                    context.getString(R.string.pdf_open_failed, it.message)
             }
 
         isRendering =
@@ -509,7 +510,7 @@ fun KakushitoApp(context: Context) {
                             ),
 
                         contentDescription =
-                            "PDFを開く"
+                            stringResource(R.string.open_pdf)
                     )
                 }
 
@@ -604,7 +605,7 @@ fun KakushitoApp(context: Context) {
                             ),
 
                         contentDescription =
-                            "マーカー",
+                            stringResource(R.string.marker),
 
                         tint =
                             Color(markerColor),
@@ -683,7 +684,7 @@ fun KakushitoApp(context: Context) {
                             ),
 
                         contentDescription =
-                            "消しゴム",
+                            stringResource(R.string.eraser),
 
                         tint =
                             Color.Gray
@@ -757,7 +758,7 @@ fun KakushitoApp(context: Context) {
                             ),
 
                         contentDescription =
-                            "隠すモード",
+                            stringResource(R.string.hide_mode),
 
                         tint =
                             Color.Gray,
@@ -802,7 +803,7 @@ fun KakushitoApp(context: Context) {
                             ),
 
                         contentDescription =
-                            "メニュー"
+                            stringResource(R.string.menu)
                     )
                 }
             }
@@ -833,7 +834,7 @@ fun KakushitoApp(context: Context) {
 
                     Text(
                         message
-                            ?: "PDFを選択してください"
+                            ?: stringResource(R.string.select_pdf)
                     )
                 }
 
@@ -1082,7 +1083,7 @@ fun KakushitoApp(context: Context) {
                 },
 
                 title = {
-                    Text("メニュー")
+                    Text(stringResource(R.string.menu))
                 },
 
                 text = {
@@ -1108,7 +1109,7 @@ fun KakushitoApp(context: Context) {
                         ) {
 
                             Text(
-                                "最近使ったファイル"
+                                stringResource(R.string.recent_files)
                             )
                         }
 
@@ -1128,7 +1129,7 @@ fun KakushitoApp(context: Context) {
                                 Modifier.fillMaxWidth()
                         ) {
 
-                            Text("使い方")
+                            Text(stringResource(R.string.how_to_use))
                         }
 
 
@@ -1148,7 +1149,7 @@ fun KakushitoApp(context: Context) {
                         ) {
 
                             Text(
-                                "このアプリについて"
+                                stringResource(R.string.about_app)
                             )
                         }
                     }
@@ -1163,7 +1164,7 @@ fun KakushitoApp(context: Context) {
                         }
                     ) {
 
-                        Text("閉じる")
+                        Text(stringResource(R.string.close))
                     }
                 }
             )

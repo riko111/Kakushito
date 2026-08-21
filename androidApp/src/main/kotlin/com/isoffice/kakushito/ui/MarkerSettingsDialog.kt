@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.isoffice.kakushito.R
 
 // ==================================================
 // マーカー設定ダイアログ
@@ -40,7 +42,7 @@ fun MarkerSettingsDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text("マーカー設定")
+            Text(stringResource(R.string.marker_settings))
         },
 
         text = {
@@ -54,7 +56,7 @@ fun MarkerSettingsDialog(
                 // ------------------------------------------
 
                 Text(
-                    text = "太さ",
+                    text = stringResource(R.string.marker_width),
                     modifier = Modifier.padding(
                         bottom = 8.dp
                     )
@@ -124,7 +126,7 @@ fun MarkerSettingsDialog(
                 // ------------------------------------------
 
                 Text(
-                    text = "色",
+                    text = stringResource(R.string.marker_color),
                     modifier = Modifier.padding(
                         bottom = 8.dp
                     )
@@ -190,7 +192,7 @@ fun MarkerSettingsDialog(
             TextButton(
                 onClick = onDismiss
             ) {
-                Text("閉じる")
+                Text(stringResource(R.string.close))
             }
         }
     )
