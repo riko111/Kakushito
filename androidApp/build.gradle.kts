@@ -9,6 +9,19 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+val releaseSigningKeys = listOf(
+    "storeFile",
+    "storePassword",
+    "keyAlias",
+    "keyPassword"
+)
+
+val hasReleaseSigning =
+    keystorePropertiesFile.exists() &&
+        releaseSigningKeys.all {
+            keystoreProperties.getProperty(it).orEmpty().isNotBlank()
+        }
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
@@ -38,16 +51,18 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     signingConfigs {
-        create("release") {
-            storeFile = rootProject.file(
-                keystoreProperties["storeFile"] as String
-            )
-            storePassword =
-                keystoreProperties["storePassword"] as String
-            keyAlias =
-                keystoreProperties["keyAlias"] as String
-            keyPassword =
-                keystoreProperties["keyPassword"] as String
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(
+                    keystoreProperties.getProperty("storeFile")
+                )
+                storePassword =
+                    keystoreProperties.getProperty("storePassword")
+                keyAlias =
+                    keystoreProperties.getProperty("keyAlias")
+                keyPassword =
+                    keystoreProperties.getProperty("keyPassword")
+            }
         }
     }
 
@@ -65,7 +80,9 @@ android {
     }
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
