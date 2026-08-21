@@ -1,1 +1,0 @@
-This file is intentionally omitted from the application and should not be included.
