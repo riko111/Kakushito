@@ -1,4 +1,4 @@
-package com.isoffice.kakushito
+package com.isoffice.kakushito.pdf
 
 import android.content.Context
 import androidx.core.content.edit

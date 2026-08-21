@@ -1,10 +1,12 @@
-package com.isoffice.kakushito
+package com.isoffice.kakushito.ui
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +43,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.isoffice.kakushito.R
+import com.isoffice.kakushito.document.DocumentStore
+import com.isoffice.kakushito.pdf.DrawMode
+import com.isoffice.kakushito.pdf.PdfPage
+import com.isoffice.kakushito.pdf.RenderedPage
+import com.isoffice.kakushito.pdf.getLastPage
+import com.isoffice.kakushito.pdf.getPageCount
+import com.isoffice.kakushito.pdf.renderPage
+import com.isoffice.kakushito.pdf.saveLastPage
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -52,13 +61,13 @@ import kotlinx.coroutines.withContext
 // マーカー設定
 // ==================================================
 
-private val MarkerColors = listOf(
+val MarkerColors = listOf(
     0xFF29B6F6.toInt(), // 水色
     0xFFFFE600.toInt(), // 黄色
     0xFF66BB6A.toInt()  // 緑
 )
 
-private val MarkerWidths = listOf(
+val MarkerWidths = listOf(
     8f,
     11f,
     14f,
@@ -73,13 +82,13 @@ private val MarkerWidths = listOf(
 
 private fun getFileName(
     context: Context,
-    uri: android.net.Uri
+    uri: Uri
 ): String {
 
     val cursor = context.contentResolver.query(
         uri,
         arrayOf(
-            android.provider.OpenableColumns.DISPLAY_NAME
+            OpenableColumns.DISPLAY_NAME
         ),
         null,
         null,
@@ -92,7 +101,7 @@ private fun getFileName(
 
             val index =
                 it.getColumnIndex(
-                    android.provider.OpenableColumns.DISPLAY_NAME
+                    OpenableColumns.DISPLAY_NAME
                 )
 
             if (index >= 0) {
@@ -105,494 +114,6 @@ private fun getFileName(
 }
 
 
-// ==================================================
-// マーカー設定ダイアログ
-// ==================================================
-
-@Composable
-private fun MarkerSettingsDialog(
-    selectedWidth: Float,
-    selectedColor: Int,
-    onWidthSelected: (Float) -> Unit,
-    onColorSelected: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-
-    AlertDialog(
-
-        onDismissRequest = onDismiss,
-
-        title = {
-            Text("マーカー設定")
-        },
-
-        text = {
-
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                // ------------------------------------------
-                // 太さ
-                // ------------------------------------------
-
-                Text(
-                    text = "太さ",
-                    modifier = Modifier.padding(
-                        bottom = 8.dp
-                    )
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceEvenly,
-
-                    verticalAlignment =
-                        Alignment.CenterVertically
-                ) {
-
-                    MarkerWidths.forEach { width ->
-
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(44.dp)
-                                    .then(
-                                        if (
-                                            width ==
-                                            selectedWidth
-                                        ) {
-                                            Modifier.border(
-                                                2.dp,
-                                                Color(0xFFFFC107),
-                                                CircleShape
-                                            )
-                                        } else {
-                                            Modifier
-                                        }
-                                    )
-                                    .pointerInput(width) {
-                                        detectTapGestures {
-                                            onWidthSelected(width)
-                                        }
-                                    },
-
-                            contentAlignment =
-                                Alignment.Center
-                        ) {
-
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .size(width.dp)
-                                        .background(
-                                            Color(0xFFFFC107),
-                                            CircleShape
-                                        )
-                            )
-                        }
-                    }
-                }
-
-
-                Spacer(
-                    modifier = Modifier.height(20.dp)
-                )
-
-
-                // ------------------------------------------
-                // 色
-                // ------------------------------------------
-
-                Text(
-                    text = "色",
-                    modifier = Modifier.padding(
-                        bottom = 8.dp
-                    )
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceEvenly,
-
-                    verticalAlignment =
-                        Alignment.CenterVertically
-                ) {
-
-                    MarkerColors.forEach { color ->
-
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(52.dp)
-                                    .then(
-                                        if (
-                                            color ==
-                                            selectedColor
-                                        ) {
-                                            Modifier.border(
-                                                2.dp,
-                                                Color.DarkGray,
-                                                CircleShape
-                                            )
-                                        } else {
-                                            Modifier
-                                        }
-                                    )
-                                    .pointerInput(color) {
-                                        detectTapGestures {
-                                            onColorSelected(color)
-                                        }
-                                    },
-
-                            contentAlignment =
-                                Alignment.Center
-                        ) {
-
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .size(28.dp)
-                                        .background(
-                                            Color(color),
-                                            CircleShape
-                                        )
-                            )
-                        }
-                    }
-                }
-            }
-        },
-
-        confirmButton = {
-
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("閉じる")
-            }
-        }
-    )
-}
-
-
-// ==================================================
-// 隠す色選択ダイアログ
-// ==================================================
-
-@Composable
-private fun HideColorDialog(
-    selectedColors: Set<Int>,
-    onToggle: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-
-    AlertDialog(
-
-        onDismissRequest = onDismiss,
-
-        title = {
-            Text("隠す色")
-        },
-
-        text = {
-
-            Column {
-
-                Text(
-                    text = "隠す対象のマーカー色を選択してください。",
-                    modifier = Modifier.padding(
-                        bottom = 12.dp
-                    )
-                )
-
-                MarkerColors.forEach { color ->
-
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .pointerInput(color) {
-                                    detectTapGestures {
-                                        onToggle(color)
-                                    }
-                                },
-
-                        verticalAlignment =
-                            Alignment.CenterVertically
-                    ) {
-
-                        Checkbox(
-                            checked =
-                                color in selectedColors,
-
-                            onCheckedChange = {
-                                onToggle(color)
-                            }
-                        )
-
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(28.dp)
-                                    .background(
-                                        Color(color),
-                                        CircleShape
-                                    )
-                        )
-                    }
-                }
-            }
-        },
-
-        confirmButton = {
-
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("閉じる")
-            }
-        }
-    )
-}
-
-
-// ==================================================
-// 最近使ったファイル
-// ==================================================
-
-@Composable
-private fun RecentFilesDialog(
-    store: DocumentStore,
-    onFileSelected: (android.net.Uri) -> Unit,
-    onDismiss: () -> Unit
-) {
-
-    val recentFiles =
-        remember {
-            store.loadRecentFiles()
-        }
-
-    AlertDialog(
-
-        onDismissRequest = onDismiss,
-
-        title = {
-            Text("最近使ったファイル")
-        },
-
-        text = {
-
-            if (recentFiles.isEmpty()) {
-
-                Text(
-                    "最近使ったファイルはありません"
-                )
-
-            } else {
-
-                Column {
-
-                    recentFiles.forEach { file ->
-
-                        TextButton(
-
-                            onClick = {
-                                onFileSelected(file.uri)
-                            },
-
-                            modifier =
-                                Modifier.fillMaxWidth()
-                        ) {
-
-                            Text(
-                                text = file.fileName,
-
-                                maxLines = 1,
-
-                                overflow =
-                                    TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-            }
-        },
-
-        confirmButton = {
-
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("閉じる")
-            }
-        }
-    )
-}
-
-
-// ==================================================
-// 使い方
-// ==================================================
-
-@Composable
-private fun HowToUseDialog(
-    onDismiss: () -> Unit
-) {
-
-    AlertDialog(
-
-        onDismissRequest = onDismiss,
-
-        title = {
-            Text("使い方")
-        },
-
-        text = {
-
-            Column {
-
-                Text("① PDFを開く")
-
-                Text(
-                    "「PDFを開く」からPDFを選択します。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                Spacer(
-                    Modifier.height(12.dp)
-                )
-
-                Text("② マーカーを引く")
-
-                Text(
-                    "マーカーをタップしてONにし、PDFを指でなぞります。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                Spacer(
-                    Modifier.height(12.dp)
-                )
-
-                Text("③ マーカー部分を隠す")
-
-                Text(
-                    "「隠す」をタップすると、マーカー部分を隠して暗記できます。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                Spacer(
-                    Modifier.height(12.dp)
-                )
-
-                Text("④ マーカーを消す")
-
-                Text(
-                    "消しゴムをタップして、不要なマーカーを消します。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                Spacer(
-                    Modifier.height(12.dp)
-                )
-
-                Text("⑤ マーカーを長押し")
-
-                Text(
-                    "マーカーを長押しすると、太さと色を変更できます。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-
-                Spacer(
-                    Modifier.height(12.dp)
-                )
-
-                Text("⑥ 隠すを長押し")
-
-                Text(
-                    "隠すを長押しすると、隠す対象の色を選択できます。",
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
-                )
-            }
-        },
-
-        confirmButton = {
-
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("閉じる")
-            }
-        }
-    )
-}
-
-
-// ==================================================
-// このアプリについて
-// ==================================================
-
-@Composable
-private fun AboutDialog(
-    onDismiss: () -> Unit
-) {
-
-    AlertDialog(
-
-        onDismissRequest = onDismiss,
-
-        title = {
-            Text("このアプリについて")
-        },
-
-        text = {
-
-            Column {
-
-                Text("かくしーと")
-
-                Spacer(
-                    Modifier.height(8.dp)
-                )
-
-                Text(
-                    "PDFにマーカーを引いて、重要な部分を隠しながら暗記できる学習アプリです。"
-                )
-            }
-        },
-
-        confirmButton = {
-
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text("閉じる")
-            }
-        }
-    )
-}
 
 
 // ==================================================
@@ -793,7 +314,7 @@ fun KakushitoApp(context: Context) {
                 context.contentResolver
                     .takePersistableUriPermission(
                         selected,
-                        android.content.Intent
+                        Intent
                             .FLAG_GRANT_READ_URI_PERMISSION
                     )
 
@@ -1365,8 +886,7 @@ fun KakushitoApp(context: Context) {
                         hideColors =
                             hideColors,
 
-                        onMarkerDrawn = {
-                                marker ->
+                        onMarkerDrawn = { marker ->
 
                             markers =
                                 markers + marker
@@ -1380,8 +900,7 @@ fun KakushitoApp(context: Context) {
                             }
                         },
 
-                        onMarkerErased = {
-                                marker ->
+                        onMarkerErased = { marker ->
 
                             markers =
                                 markers - marker
@@ -1667,11 +1186,49 @@ fun KakushitoApp(context: Context) {
                     showRecentFiles =
                         false
 
-                    rendered =
-                        null
+                    // ------------------------------------------
+                    // URIの読み取り権限を維持
+                    // ------------------------------------------
 
-                    renderedPageIndex =
-                        -1
+                    runCatching {
+
+                        context.contentResolver
+                            .takePersistableUriPermission(
+                                selectedUri,
+                                Intent
+                                    .FLAG_GRANT_READ_URI_PERMISSION
+                            )
+                    }
+
+
+                    // ------------------------------------------
+                    // ファイル名
+                    // ------------------------------------------
+
+                    val selectedFileName =
+                        getFileName(
+                            context,
+                            selectedUri
+                        )
+
+
+                    // ------------------------------------------
+                    // 最近使ったファイルを更新
+                    //
+                    // Aを表示中にBを選んだ場合
+                    // B → A → その他
+                    // の順になる
+                    // ------------------------------------------
+
+                    store.addRecentFile(
+                        selectedUri,
+                        selectedFileName
+                    )
+
+
+                    // ------------------------------------------
+                    // 現在のPDFを切り替え
+                    // ------------------------------------------
 
                     store.setDocumentUri(
                         selectedUri
@@ -1680,16 +1237,38 @@ fun KakushitoApp(context: Context) {
                     uri =
                         selectedUri
 
+
+                    // ------------------------------------------
+                    // Bの状態を読み直す
+                    // ------------------------------------------
+
                     pageIndex =
                         getLastPage(
                             context,
                             selectedUri.toString()
                         )
 
+                    pageCount =
+                        0
+
                     markers =
                         store.loadMarkers(
                             selectedUri
                         )
+
+
+                    // ------------------------------------------
+                    // 古いPDFの描画を破棄
+                    // ------------------------------------------
+
+                    rendered =
+                        null
+
+                    renderedPageIndex =
+                        -1
+
+                    message =
+                        null
                 },
 
                 onDismiss = {

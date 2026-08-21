@@ -1,10 +1,11 @@
-package com.isoffice.kakushito
+package com.isoffice.kakushito.document
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.content.edit
+import com.isoffice.kakushito.marker.Marker
 import org.json.JSONArray
 import org.json.JSONObject
-import androidx.core.content.edit
 
 class DocumentStore(context: Context) {
     private val preferences = context.getSharedPreferences("kakushito_markers", Context.MODE_PRIVATE)

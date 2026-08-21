@@ -1,4 +1,4 @@
-package com.isoffice.kakushito
+package com.isoffice.kakushito.pdf
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -19,6 +19,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import com.isoffice.kakushito.document.PdfPoint
+import com.isoffice.kakushito.marker.Marker
+import kotlin.math.abs
 import kotlin.math.min
 
 enum class DrawMode {
@@ -679,13 +682,13 @@ fun PdfPage(
                                                     start.y
 
                                         if (
-                                            kotlin.math.abs(
+                                            abs(
                                                 deltaX
                                             ) > 50f &&
-                                            kotlin.math.abs(
+                                            abs(
                                                 deltaX
                                             ) >
-                                            kotlin.math.abs(
+                                            abs(
                                                 deltaY
                                             )
                                         ) {

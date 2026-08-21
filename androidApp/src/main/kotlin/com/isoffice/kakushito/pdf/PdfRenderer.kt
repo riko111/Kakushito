@@ -1,7 +1,8 @@
-package com.isoffice.kakushito
+package com.isoffice.kakushito.pdf
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.core.graphics.createBitmap
@@ -39,7 +40,7 @@ suspend fun renderPage(
                 )
 
                 bitmap.eraseColor(
-                    android.graphics.Color.WHITE
+                    Color.WHITE
                 )
 
                 page.render(
