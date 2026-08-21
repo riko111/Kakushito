@@ -126,7 +126,8 @@ fun PdfPage(
             }
             .pointerInput(
                 drawMode,
-                pageIndex
+                pageIndex,
+                markerWidth
             ) {
 
                 awaitPointerEventScope {
@@ -609,6 +610,11 @@ fun PdfPage(
                                         }
 
                                     pageMarkers.forEach { marker ->
+                                        println(
+                                            "DISPLAY MARKER: width=${marker.width}, " +
+                                                    "markerWidth=$markerWidth, " +
+                                                    "displayScale=$displayScale"
+                                        )
 
                                         val hit =
                                             marker.points.any {

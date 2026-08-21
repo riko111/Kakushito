@@ -1052,7 +1052,8 @@ fun KakushitoApp(context: Context) {
                                         if (
                                             rendered != null
                                         ) {
-
+                                            drawMode =
+                                                DrawMode.Marker
                                             showMarkerSettings =
                                                 true
                                         }
