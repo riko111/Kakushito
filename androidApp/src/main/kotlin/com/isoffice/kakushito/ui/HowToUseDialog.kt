@@ -45,9 +45,7 @@ fun HowToUseDialog(
                     )
                 )
 
-                Spacer(
-                    Modifier.height(12.dp)
-                )
+                Spacer(Modifier.height(12.dp))
 
                 Text(stringResource(R.string.how_to_draw_marker_title))
 
@@ -59,9 +57,7 @@ fun HowToUseDialog(
                     )
                 )
 
-                Spacer(
-                    Modifier.height(12.dp)
-                )
+                Spacer(Modifier.height(12.dp))
 
                 Text(stringResource(R.string.how_to_hide_marker_title))
 
@@ -73,9 +69,7 @@ fun HowToUseDialog(
                     )
                 )
 
-                Spacer(
-                    Modifier.height(12.dp)
-                )
+                Spacer(Modifier.height(12.dp))
 
                 Text(stringResource(R.string.how_to_erase_marker_title))
 
@@ -87,9 +81,7 @@ fun HowToUseDialog(
                     )
                 )
 
-                Spacer(
-                    Modifier.height(12.dp)
-                )
+                Spacer(Modifier.height(12.dp))
 
                 Text(stringResource(R.string.how_to_marker_settings_title))
 
@@ -101,9 +93,7 @@ fun HowToUseDialog(
                     )
                 )
 
-                Spacer(
-                    Modifier.height(12.dp)
-                )
+                Spacer(Modifier.height(12.dp))
 
                 Text(stringResource(R.string.how_to_hide_color_title))
 
@@ -114,14 +104,36 @@ fun HowToUseDialog(
                         top = 4.dp
                     )
                 )
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(stringResource(R.string.how_to_zoom_title))
+
+                Text(
+                    stringResource(R.string.how_to_zoom_description),
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 4.dp
+                    )
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(stringResource(R.string.how_to_page_title))
+
+                Text(
+                    stringResource(R.string.how_to_page_description),
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 4.dp
+                    )
+                )
             }
         },
 
         confirmButton = {
 
-            TextButton(
-                onClick = onDismiss
-            ) {
+            TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.close))
             }
         }
