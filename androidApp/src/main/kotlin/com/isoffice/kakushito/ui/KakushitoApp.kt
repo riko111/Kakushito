@@ -282,11 +282,8 @@ fun KakushitoApp(context: Context) {
                 pageCount - 1
             )
 
-        // ページ切替中に旧ページへ入力されないよう、
-        // 新ページの描画が完了するまで現在の表示を破棄する。
-        rendered = null
-        renderedPageIndex = -1
-
+        // 現在表示中のページは、新しいページの描画が完了するまで保持する。
+        // rendered を null にすると「PDFを選択してください」が一瞬表示される。
         pageIndex =
             newPage
 
@@ -855,8 +852,11 @@ fun KakushitoApp(context: Context) {
                         page =
                             rendered!!,
 
+                        // 現在画面に表示されているページ番号を渡す。
+                        // 次ページの描画中も旧ページを表示し続けるため、
+                        // pageIndex ではなく renderedPageIndex を使用する。
                         pageIndex =
-                            pageIndex,
+                            renderedPageIndex,
 
                         markers =
                             if (
