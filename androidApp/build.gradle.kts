@@ -70,8 +70,8 @@ android {
         applicationId = "com.isoffice.kakushito"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 6
-        versionName = "1.0.2"
+        versionCode = 8
+        versionName = "1.0.4"
     }
     packaging {
         resources {
