@@ -130,6 +130,7 @@ fun PdfPage(
             .pointerInput(
                 drawMode,
                 pageIndex,
+                markerColor,
                 markerWidth
             ) {
 
