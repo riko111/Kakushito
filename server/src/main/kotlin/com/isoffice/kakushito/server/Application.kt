@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 fun main() {
     FirebaseAdmin.initialize()
     val dataSource = createDataSource()
+    val userRepository = UserRepository(dataSource)
 
     embeddedServer(
         Netty,
@@ -21,6 +22,8 @@ fun main() {
         install(ContentNegotiation) {
             json()
         }
+
+        configureFirebaseAuth()
 
         routing {
             get("/health") {
@@ -46,6 +49,23 @@ fun main() {
                         }
                     }
                 }
+            }
+
+            get("/api/me") {
+                if (!call.attributes.contains(FirebaseUserKey)) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        mapOf("error" to "Authentication required")
+                    )
+                    return@get
+                }
+
+                val firebaseUser = call.attributes[FirebaseUserKey]
+
+                val user = userRepository.findByFirebaseUid(firebaseUser.uid)
+                    ?: userRepository.createFromFirebase(firebaseUser)
+
+                call.respond(user)
             }
         }
     }.start(wait = true)
