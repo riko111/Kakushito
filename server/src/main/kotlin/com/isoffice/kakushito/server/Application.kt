@@ -10,6 +10,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
+    val dataSource = createDataSource()
+
     embeddedServer(
         Netty,
         host = "0.0.0.0",
@@ -25,6 +27,24 @@ fun main() {
                     HttpStatusCode.OK,
                     mapOf("status" to "ok")
                 )
+            }
+
+            get("/api/health/db") {
+                dataSource.connection.use { connection ->
+                    connection.createStatement().use { statement ->
+                        statement.executeQuery("SELECT DATABASE()").use { result ->
+                            result.next()
+
+                            call.respond(
+                                HttpStatusCode.OK,
+                                mapOf(
+                                    "status" to "ok",
+                                    "database" to result.getString(1)
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }.start(wait = true)

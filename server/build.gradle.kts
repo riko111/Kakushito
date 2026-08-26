@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.mysql.connector)
+    implementation(libs.hikari)
 
     testImplementation(libs.ktor.server.test.host)
 }
