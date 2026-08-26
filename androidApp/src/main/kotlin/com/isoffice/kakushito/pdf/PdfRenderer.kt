@@ -21,11 +21,14 @@ data class RenderedPage(
 )
 
 private const val PDF_RENDER_SCALE = 2
-private const val PDF_PROVIDER_RETRY_COUNT = 5
-private const val PDF_PROVIDER_RETRY_DELAY_MS = 200L
+
+// DocumentsProvider が ACTION_OPEN_DOCUMENT の直後に一時的に利用できない場合がある。
+// 初回選択時の "No content provider" を避けるため、最大約4.5秒間リトライする。
+private const val PDF_PROVIDER_RETRY_COUNT = 10
+private const val PDF_PROVIDER_RETRY_DELAY_MS = 500L
 
 /**
- * Open a PDF descriptor with a short retry window.
+ * Open a PDF descriptor with a retry window.
  *
  * Some DocumentsProvider implementations (notably cloud storage providers)
  * can be temporarily unavailable immediately after ACTION_OPEN_DOCUMENT
