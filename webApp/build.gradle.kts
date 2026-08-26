@@ -24,5 +24,9 @@ kotlin {
 
             implementation(libs.compose.ui)
         }
+
+        jsMain.dependencies {
+            implementation(npm("firebase", "12.18.0"))
+        }
     }
 }
