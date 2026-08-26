@@ -21,7 +21,9 @@ import kakushito.shared.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    onGoogleLogin: (() -> Unit)? = null
+) {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
 
@@ -38,6 +40,13 @@ fun App() {
                 Text("Click me!")
             }
 
+            if (onGoogleLogin != null) {
+                Button(
+                    onClick = onGoogleLogin
+                ) {
+                    Text("Googleでログイン")
+                }
+            }
 
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
