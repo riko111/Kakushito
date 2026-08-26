@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.mysql.connector)
     implementation(libs.hikari)
+    implementation(libs.firebase.admin)
 
     testImplementation(libs.ktor.server.test.host)
 }

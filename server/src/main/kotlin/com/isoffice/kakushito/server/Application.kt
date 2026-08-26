@@ -10,6 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
+    FirebaseAdmin.initialize()
     val dataSource = createDataSource()
 
     embeddedServer(
