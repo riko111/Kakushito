@@ -44,7 +44,7 @@ fun App(
                 Button(
                     onClick = onGoogleLogin
                 ) {
-                    Text("Googleでログイン")
+                    Text("Google Login")
                 }
             }
 

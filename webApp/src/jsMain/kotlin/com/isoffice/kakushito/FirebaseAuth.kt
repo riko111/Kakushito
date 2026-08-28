@@ -10,18 +10,19 @@ external object FirebaseAppModule {
 @JsNonModule
 external object FirebaseAuthModule {
     fun getAuth(app: dynamic): dynamic
+
     fun signInWithPopup(
         auth: dynamic,
         provider: dynamic
     ): dynamic
 }
 
+
 @JsModule("firebase/auth")
 @JsNonModule
 external class GoogleAuthProvider {
     constructor()
 }
-
 object FirebaseAuthManager {
 
     private var app: dynamic = null
@@ -59,17 +60,15 @@ object FirebaseAuthManager {
             provider
         )
     }
+
     fun getIdToken(): dynamic {
         initialize()
 
-        val currentUser = auth.currentUser
-
-        if (currentUser == null) {
-            return null
-        }
+        val currentUser = auth.currentUser ?: return null
 
         return currentUser.getIdToken(false)
     }
+
     fun signInAndGetIdToken(): dynamic {
         return signInWithGoogle()
             .then { result ->
