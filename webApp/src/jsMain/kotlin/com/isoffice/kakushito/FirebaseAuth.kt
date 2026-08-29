@@ -72,4 +72,18 @@ object FirebaseAuthManager {
                 result.user.getIdToken(false)
             }
     }
+    fun signInAndGetUid(): dynamic {
+        return signInWithGoogle()
+            .then { result ->
+                result.user.uid
+            }
+    }
+    fun getCurrentUserUid(): String? {
+        initialize()
+
+        val currentUser = auth.currentUser ?: return null
+
+        return currentUser.uid as String
+    }
+
 }
