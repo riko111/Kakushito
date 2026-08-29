@@ -23,9 +23,13 @@ fun startFirebaseLogin() {
                 append("Authorization", "Bearer $idToken")
             }
 
+            val requestInit = RequestInit().apply {
+                this.headers = headers
+            }
+
             window.fetch(
                 "${apiBaseUrl()}/api/me",
-                RequestInit(headers = headers)
+                requestInit
             )
         }
         .then { response ->
