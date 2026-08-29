@@ -2,7 +2,6 @@ package com.isoffice.kakushito
 
 import kotlinx.browser.window
 import org.w3c.fetch.Headers
-import org.w3c.fetch.RequestInit
 
 private const val productionHost = "kakushito.isoffice.com"
 
@@ -23,9 +22,11 @@ fun startFirebaseLogin() {
                 append("Authorization", "Bearer $idToken")
             }
 
-            val requestInit = RequestInit().apply {
-                this.headers = headers
-            }
+            // Build RequestInit dynamically so Kotlin/JS does not emit
+            // optional RequestInit fields with null values. Chrome rejects
+            // null for enum-valued fields such as RequestInit.cache.
+            val requestInit: dynamic = js("({})")
+            requestInit.headers = headers
 
             window.fetch(
                 "${apiBaseUrl()}/api/me",
