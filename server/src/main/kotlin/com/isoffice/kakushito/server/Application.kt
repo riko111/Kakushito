@@ -27,6 +27,7 @@ fun main() {
             allowHost("kakushito.isoffice.com", schemes = listOf("https"))
             allowHeader(HttpHeaders.Authorization)
             allowHeader(HttpHeaders.ContentType)
+            allowMethod(HttpMethod.Options)
             allowMethod(HttpMethod.Get)
             allowMethod(HttpMethod.Post)
         }
