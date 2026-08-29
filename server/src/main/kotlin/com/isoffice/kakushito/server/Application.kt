@@ -6,6 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -19,6 +20,17 @@ fun main() {
         host = "0.0.0.0",
         port = 8080
     ) {
+        install(CORS) {
+            allowHost("localhost", schemes = listOf("http"))
+            allowHost("127.0.0.1", schemes = listOf("http"))
+            allowHost("192.168.1.108", schemes = listOf("http"))
+            allowHost("kakushito.isoffice.com", schemes = listOf("https"))
+            allowHeader(HttpHeaders.Authorization)
+            allowHeader(HttpHeaders.ContentType)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+        }
+
         install(ContentNegotiation) {
             json()
         }
