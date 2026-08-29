@@ -1,8 +1,10 @@
 package com.isoffice.kakushito.server
 
 import com.google.firebase.auth.FirebaseToken
+import kotlinx.serialization.Serializable
 import javax.sql.DataSource
 
+@Serializable
 data class User(
     val id: Long,
     val firebaseUid: String,

@@ -1,11 +1,19 @@
 package com.isoffice.kakushito
 
-fun startFirebaseLogin() {
-    FirebaseAuthManager.signInAndGetUid()
-        .then { uid ->
-            console.log("Firebase Uid:", uid)
+fun startFirebaseLogin(
+    onUserLoaded: (dynamic) -> Unit,
+    onError: (dynamic) -> Unit
+) {
+    FirebaseAuthManager.signInAndGetIdToken()
+        .then { idToken ->
+            FirebaseApi.getMe(idToken as String)
+        }
+        .then { user ->
+            console.log("Authenticated user:", user)
+            onUserLoaded(user)
         }
         .catch { error ->
-            console.error("Firebase sign-in failed:", error)
+            console.error("Firebase login failed:", error)
+            onError(error)
         }
 }

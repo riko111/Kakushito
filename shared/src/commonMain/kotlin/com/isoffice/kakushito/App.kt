@@ -22,7 +22,8 @@ import kakushito.shared.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App(
-    onGoogleLogin: (() -> Unit)? = null
+    onGoogleLogin: (() -> Unit)? = null,
+    loginStatus: String? = null
 ) {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
@@ -46,6 +47,10 @@ fun App(
                 ) {
                     Text("Google Login")
                 }
+            }
+
+            if (loginStatus != null) {
+                Text(loginStatus)
             }
 
             AnimatedVisibility(showContent) {

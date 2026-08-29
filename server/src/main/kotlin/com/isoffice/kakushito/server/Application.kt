@@ -6,6 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -21,6 +22,15 @@ fun main() {
     ) {
         install(ContentNegotiation) {
             json()
+        }
+
+        install(CORS) {
+            // Webpack development server. Production should be served from the
+            // same origin as this API, or explicitly added here.
+            allowHost("localhost:8082", schemes = listOf("http"))
+            allowHost("127.0.0.1:8082", schemes = listOf("http"))
+            allowHeader(HttpHeaders.Authorization)
+            allowMethod(HttpMethod.Get)
         }
 
         configureFirebaseAuth()
