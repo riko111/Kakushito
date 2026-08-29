@@ -11,17 +11,14 @@ external object FirebaseAppModule {
 external object FirebaseAuthModule {
     fun getAuth(app: dynamic): dynamic
 
+    class GoogleAuthProvider {
+        constructor()
+    }
+
     fun signInWithPopup(
         auth: dynamic,
         provider: dynamic
     ): dynamic
-}
-
-
-@JsModule("firebase/auth")
-@JsNonModule
-external class GoogleAuthProvider {
-    constructor()
 }
 object FirebaseAuthManager {
 
@@ -53,7 +50,7 @@ object FirebaseAuthManager {
     fun signInWithGoogle(): dynamic {
         initialize()
 
-        val provider = GoogleAuthProvider()
+        val provider = FirebaseAuthModule.GoogleAuthProvider()
 
         return FirebaseAuthModule.signInWithPopup(
             auth,
