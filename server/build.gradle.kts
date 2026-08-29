@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "2.4.10"
     id("io.ktor.plugin") version "3.5.2"
     application
 }
