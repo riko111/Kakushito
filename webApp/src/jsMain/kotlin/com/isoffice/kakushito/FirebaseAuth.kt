@@ -19,6 +19,10 @@ external object FirebaseAuthModule {
         auth: dynamic,
         provider: dynamic
     ): dynamic
+
+    fun onAuthStateChanged(auth: dynamic, nextOrObserver: (dynamic) -> Unit): dynamic
+
+    fun signOut(auth: dynamic): dynamic
 }
 object FirebaseAuthManager {
 
@@ -72,18 +76,18 @@ object FirebaseAuthManager {
                 result.user.getIdToken(false)
             }
     }
-    fun signInAndGetUid(): dynamic {
-        return signInWithGoogle()
-            .then { result ->
-                result.user.uid
-            }
-    }
-    fun getCurrentUserUid(): String? {
+
+    fun observeAuthState(onUserChanged: (dynamic) -> Unit): () -> Unit {
         initialize()
 
-        val currentUser = auth.currentUser ?: return null
+        val unsubscribe = FirebaseAuthModule.onAuthStateChanged(auth, onUserChanged)
 
-        return currentUser.uid as String
+        return { unsubscribe() }
     }
 
+    fun signOut(): dynamic {
+        initialize()
+
+        return FirebaseAuthModule.signOut(auth)
+    }
 }

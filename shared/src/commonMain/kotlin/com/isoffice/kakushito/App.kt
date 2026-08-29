@@ -23,7 +23,9 @@ import kakushito.shared.generated.resources.compose_multiplatform
 @Preview
 fun App(
     onGoogleLogin: (() -> Unit)? = null,
-    loginStatus: String? = null
+    onGoogleLogout: (() -> Unit)? = null,
+    loginStatus: String? = null,
+    isLoggedIn: Boolean = false
 ) {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
@@ -41,7 +43,13 @@ fun App(
                 Text("Click me!")
             }
 
-            if (onGoogleLogin != null) {
+            if (isLoggedIn && onGoogleLogout != null) {
+                Button(
+                    onClick = onGoogleLogout
+                ) {
+                    Text("Google Logout")
+                }
+            } else if (onGoogleLogin != null) {
                 Button(
                     onClick = onGoogleLogin
                 ) {
