@@ -27,6 +27,7 @@ kotlin {
 
         jsMain.dependencies {
             implementation(npm("firebase", "12.18.0"))
+            implementation(libs.wrappers.browser)
         }
     }
 }
