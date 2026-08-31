@@ -22,10 +22,9 @@ import kakushito.shared.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App(
+    authState: AuthState = AuthState.SignedOut,
     onGoogleLogin: (() -> Unit)? = null,
     onGoogleLogout: (() -> Unit)? = null,
-    loginStatus: String? = null,
-    isLoggedIn: Boolean = false
 ) {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
@@ -43,22 +42,41 @@ fun App(
                 Text("Click me!")
             }
 
-            if (isLoggedIn && onGoogleLogout != null) {
-                Button(
-                    onClick = onGoogleLogout
-                ) {
-                    Text("Google Logout")
+            when (authState) {
+                AuthState.Loading -> {
+                    Text("Checking sign-in status...")
                 }
-            } else if (onGoogleLogin != null) {
-                Button(
-                    onClick = onGoogleLogin
-                ) {
-                    Text("Google Login")
-                }
-            }
 
-            if (loginStatus != null) {
-                Text(loginStatus)
+                AuthState.SignedOut -> {
+                    if (onGoogleLogin != null) {
+                        Button(onClick = onGoogleLogin) {
+                            Text("Google Login")
+                        }
+                    }
+                }
+
+                is AuthState.SignedIn -> {
+                    val user = authState.user
+                    Text(user.displayName ?: user.email ?: user.firebaseUid)
+                    if (user.email != null) {
+                        Text(user.email)
+                    }
+                    Text("Plan: ${user.plan}")
+                    if (onGoogleLogout != null) {
+                        Button(onClick = onGoogleLogout) {
+                            Text("Google Logout")
+                        }
+                    }
+                }
+
+                is AuthState.Error -> {
+                    Text("Sign-in error: ${authState.message}")
+                    if (onGoogleLogin != null) {
+                        Button(onClick = onGoogleLogin) {
+                            Text("Google Login")
+                        }
+                    }
+                }
             }
 
             AnimatedVisibility(showContent) {

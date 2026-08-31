@@ -4,6 +4,10 @@ import com.google.firebase.auth.FirebaseToken
 import kotlinx.serialization.Serializable
 import javax.sql.DataSource
 
+/**
+ * `/api/me` のレスポンス。クライアント側 `com.isoffice.kakushito.User`
+ * （shared/commonMain）と JSON 契約を一致させること。
+ */
 @Serializable
 data class User(
     val id: Long,

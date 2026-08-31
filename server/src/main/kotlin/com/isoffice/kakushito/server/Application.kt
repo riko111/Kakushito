@@ -24,8 +24,14 @@ fun main() {
             allowHost("localhost", schemes = listOf("http"))
             allowHost("127.0.0.1", schemes = listOf("http"))
             allowHost("192.168.1.108", schemes = listOf("http"))
-            allowHost("192.168.1.108:8081", schemes = listOf("http"))
             allowHost("kakushito.isoffice.com", schemes = listOf("https"))
+            // Webpack development server. The Kotlin/JS dev server picks a free
+            // port near 8080 (8081/8082 when this API already holds 8080).
+            // Production should be served from the same origin as this API.
+            for (host in listOf("localhost", "127.0.0.1", "192.168.1.108")) {
+                allowHost("$host:8081", schemes = listOf("http"))
+                allowHost("$host:8082", schemes = listOf("http"))
+            }
             allowHeader(HttpHeaders.Authorization)
             allowHeader(HttpHeaders.ContentType)
             allowMethod(HttpMethod.Options)
@@ -35,15 +41,6 @@ fun main() {
 
         install(ContentNegotiation) {
             json()
-        }
-
-        install(CORS) {
-            // Webpack development server. Production should be served from the
-            // same origin as this API, or explicitly added here.
-            allowHost("localhost:8082", schemes = listOf("http"))
-            allowHost("127.0.0.1:8082", schemes = listOf("http"))
-            allowHeader(HttpHeaders.Authorization)
-            allowMethod(HttpMethod.Get)
         }
 
         configureFirebaseAuth()
