@@ -20,6 +20,19 @@ fun main() {
         host = "0.0.0.0",
         port = 8080
     ) {
+        install(CORS) {
+            allowHost("localhost", schemes = listOf("http"))
+            allowHost("127.0.0.1", schemes = listOf("http"))
+            allowHost("192.168.1.108", schemes = listOf("http"))
+            allowHost("192.168.1.108:8081", schemes = listOf("http"))
+            allowHost("kakushito.isoffice.com", schemes = listOf("https"))
+            allowHeader(HttpHeaders.Authorization)
+            allowHeader(HttpHeaders.ContentType)
+            allowMethod(HttpMethod.Options)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+        }
+
         install(ContentNegotiation) {
             json()
         }
@@ -36,6 +49,10 @@ fun main() {
         configureFirebaseAuth()
 
         routing {
+            options("/api/me") {
+                call.respond(HttpStatusCode.OK)
+            }
+
             get("/health") {
                 call.respond(
                     HttpStatusCode.OK,
