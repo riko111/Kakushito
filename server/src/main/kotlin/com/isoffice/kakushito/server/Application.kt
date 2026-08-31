@@ -37,6 +37,15 @@ fun main() {
             json()
         }
 
+        install(CORS) {
+            // Webpack development server. Production should be served from the
+            // same origin as this API, or explicitly added here.
+            allowHost("localhost:8082", schemes = listOf("http"))
+            allowHost("127.0.0.1:8082", schemes = listOf("http"))
+            allowHeader(HttpHeaders.Authorization)
+            allowMethod(HttpMethod.Get)
+        }
+
         configureFirebaseAuth()
 
         routing {

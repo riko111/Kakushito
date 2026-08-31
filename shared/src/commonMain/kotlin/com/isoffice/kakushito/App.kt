@@ -22,7 +22,10 @@ import kakushito.shared.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App(
-    onGoogleLogin: (() -> Unit)? = null
+    onGoogleLogin: (() -> Unit)? = null,
+    onGoogleLogout: (() -> Unit)? = null,
+    loginStatus: String? = null,
+    isLoggedIn: Boolean = false
 ) {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
@@ -40,12 +43,22 @@ fun App(
                 Text("Click me!")
             }
 
-            if (onGoogleLogin != null) {
+            if (isLoggedIn && onGoogleLogout != null) {
+                Button(
+                    onClick = onGoogleLogout
+                ) {
+                    Text("Google Logout")
+                }
+            } else if (onGoogleLogin != null) {
                 Button(
                     onClick = onGoogleLogin
                 ) {
                     Text("Google Login")
                 }
+            }
+
+            if (loginStatus != null) {
+                Text(loginStatus)
             }
 
             AnimatedVisibility(showContent) {
